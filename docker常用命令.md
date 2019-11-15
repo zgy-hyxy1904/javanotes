@@ -21,3 +21,15 @@
 4. 获取元信息（详细信息）docker inspect 镜像的名字或ID
 
 5. 删除 docker rmi -f  镜像的名字或者ID
+
+**容器操作**
+
+1. 运行 docker run --name my名字 -it -p 8888:8080 -d 
+2. 列表 docker ps -aq
+3. 启动 docker start 容器的名字或者ID
+4. 停止 docker stop 容器的名字或者ID
+5. 删除 docker rm -f 容器的名字或者ID       docker rm -f $(docker ps -aq)
+6. 日志 docker logs 容器的名字或者ID
+7. 在容器中执行 docker exec -it 容器的名字或者ID /bin/bash
+8. 拷贝文件（主机和容器之间）docker cp 文件 容器的名字或者ID：位置
+9. 获取元信息（详细信息）docker inspect 容器的名字或者ID
