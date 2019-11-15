@@ -137,9 +137,9 @@ yum install软件包名#安装
 yum remove软件包名#卸载
 ```
 
-三、**Docker**安装
+### 三、**Docker**安装
 
-1. 安装
+1. **安装**
 
 Docker版本：社区版CE、企业版EE
 
@@ -148,20 +148,18 @@ Docker版本：社区版CE、企业版EE
 yum update
 
 #设置yum源
-yum install -y yum-utils device-mapper-persistent-data Ivm2
+sudo yum install -y yum-utils device-mapper-persistent-data Ivm2
 
-yum install yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 
 
-yum makecache fast
+sudo yum makecache fast
 
 # 安装Docker-CE
 
 yum -y install docker-ce
 ```
 
-2. 启动/停止
-
-   
+2. **启动/停止**
 
 ```
 docker version # 查看版本
@@ -172,7 +170,7 @@ systemctI stop docker # 停止
 
 systemctI status docker # 查看状态
 
-systemctI restart docker	# 重启
+systemctI restart docker # 重启
 
 systemctI enable docker # 设置开机自动启动
 
@@ -181,7 +179,78 @@ systemctI enable docker # 设置开机自动启动
 docker run hello-world # 下载hello-world镜像并运行
 ```
 
+3. **配置Docker的镜像加速**
+
+使用阿里云提供的镜像加速（镜像仓库），也可以使用网易云等
+
+步骤：
+
+1. 注册并登陆"阿里云的开发者平台"[http://dev.aliyun.com](http://dev.aliyun.com/)
+
+2. 查看专属的加速器地址
+3. 配置自己的D ocker加速器
+
+```
+vi /etc/docker/daemon.json
+
+{
+
+"registry-mirrors": ["https://sswv6yx0.mirror.aliyuncs.com"]
+
+}
+
+systemctl daemon-reload
+
+systemctl restart docker
+
+```
 
 
 
+### 四，docker的操作
+
+输入docker可以查看Docker的命令用法，输入docker COMMAND --help查看指定命令的详细用法
+
+1. **镜像操作**
+
+| 操作        | 命令                             | 说明                                                      |
+| :---------- | -------------------------------- | --------------------------------------------------------- |
+| 查找        | docker search 关键字             | 可以在D ocker Hub网站查看镜像的详细信息，如镜像的 tag标签 |
+| 抽取        | docker pull 镜像名:tag           | :tag表示软件的版本，如果不指定默认是latest                |
+| 列表        | docker images                    | 查看所有本地镜像                                          |
+| 获取元信 息 | docker inspect 镜像 id           | 获取镜像的元信息，详细信息                                |
+| 删除        | docker rmi -f镜像id或镜像 名:tag | 删除指定的本地镜像，-f表示强制删除                        |
+
+## 第三天  2019/11/15
+
+1. **容器操作**
+
+   | 操作             | 命令                                                         | 说明                                                         |
+   | ---------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+   | 运行             | docker run --name 容器 名-i -t -p主机端口 :容器 端口 -d -v主机目录:容 器目录:ro镜像id或镜像 名称:tag | --name指定容器名，名称自定义，如果不指定会自动命名；-i以交 互模式运行，即以交互模式运行容器；-t分配一个伪终端，即命令 行，通常组合使用-it ； -p指定端口映射，将主机端口映射到容器内 的端口； -d表示后台运行，即守护式运行容器；-v指定挂载主机目 录到容器目录，默认为rw读写模式，r。表示只读 |
+   | 列 表            | docker ps -a -q                                              | 查看正在运行的容器，-a表示显示所有容器，-q表示只显示容器id   |
+   | 启动             | docker start 容器 id 或容                                    | 启动容器                                                     |
+   | 停 止            | docker stop容器id或容 器名称                                 | 停止正在运行的容器                                           |
+   | 删 除            | docker rm -f容器id或容器名称                                 | 删除容器，-f表示强制删除                                     |
+   | 日 志            | docker logs容器id或容 器名称                                 | 获取容器的日志                                               |
+   | 在容 器 中 执 行 | docker exec -it 容器 id 或容器名称/bin/bash                  | 进入正在运行的容器中并开启一个交互模式的终端，可以在容器中执 行操作 |
+   | 拷 贝 文 件      | docker cp主机中的文 件路径容器id或容器名 称:容器路径；docker cp容器id或容器名称:容 器中的文件路径主机路 径 | 将文件中的文件拷贝到容器中；将容器中的文件拷贝到主机中       |
+   | 获 取 元 信 息   | docker inspect 容器 id                                       | 获取容器的元信息                                             |
+
+以CentOS为例子：
+
+```
+docker search centos
+docker pull centos
+docker run --name mycentos -it centos:latest # 根据 centos:latest 镜像运行容器，并以交互模式进入 容器中
+#实际上是在Docker容器中运行一个精简版的CentOS系统
+exit #退出并关闭容器
+docker ps -a
+docker start mycentos
+docker stop mycentos
+docker rm mycentos
+docker rm -f $(docker ps -aq) # 强制删除所有容器
+```
+
+**注意：docker容器内实际上是运行着一个精简版的Linux系统**
 
