@@ -32,7 +32,7 @@ Docker简化了环境部署和配置，实现“**一次构建，处处运行**�
 
 **可以将Docker简单的认为是一个虚拟机**，可以运行各种软件环境的虚拟机，但与传统虚拟机技术有所不同
 
-Docke r容器技术与传统虚拟机技术的区别：
+Docker容器技术与传统虚拟机技术的区别：
 
 - **传统虚拟机技术：模拟一个完整的操作系统，先虚拟出一套硬件，然后在其上安装操作系**
 
@@ -164,7 +164,7 @@ yum -y install docker-ce
 ```
 docker version # 查看版本
 
-systemctI start docker # 启动
+systemctl start docker # 启动
 
 systemctI stop docker # 停止
 
@@ -311,9 +311,9 @@ tomcat镜像为什么这么大？
 
 •更新镜像：使用docker commit命令
 
-•构建镜像：使用docker build命令，需要创建D ockerfile文件
+•构建镜像：使用docker build命令，需要创建Dockerfile文件
 
-**4.1**更新镜像
+**4.1更新镜像**
 
 先使用基础镜像创建一个容器，然后对容器进行修改，最后使用c ommit命令提交为一个新的镜像
 
@@ -343,7 +343,7 @@ exit
 3. 提交为新镜像，语法：docker commit -m="描述消息"-a="作者"容器id或容器名镜像名:tag
 
 ```
-docker commit -m="修改默认索引页"-a="汤小洋"bcd08edac78d itany/tomcat:v1
+docker commit -m="修改默认索引页"-a="仲广宇" bcd08edac78d itany/tomcat:v1
 ```
 
 4. 使用新镜像运行容器
@@ -352,5 +352,190 @@ docker commit -m="修改默认索引页"-a="汤小洋"bcd08edac78d itany/tomcat:
 docker run --name tomcat_v1 -p:8080:8080 -d itany/tomcat:v1
 ```
 
+## 第四天 2019/11/18
 
+**4.2构建镜像**
 
+根据Dockerfile文件来自动构建镜像
+
+Dockerfile是一个包含创建镜像所有命令的文本文件，使用docker build命令可以根据Dockerfile的内 容创建镜像
+
+步骤：
+
+1. 创建一个Dockerfile文件 vi Dockerfile
+
+```
+#基础镜像
+FROM tomcat
+#作者
+MAINTAINER tangxiaoyang@itany.com
+#执行命令
+RUN rm -f /usr/local/tomcat/webapps/ROOT/index.jsp
+RUN echo "welcome to tomcat!" > /usr/local/tomcat/webapps/ROOT/index.html
+```
+
+2. 构建新镜像，语法：docker build -f Dockerfile文件的路径-t镜像名:tag命令执行的上下文
+
+```
+docker build -f Dockerfile -t itany/tomcat:v2 .
+```
+
+3. 使用新镜像运行容器
+
+```
+docker run -p 9999:8080 -d itany/tomcat:v2
+```
+
+### 五、DockerFile详解
+
+#### 1. 简介
+
+Dockerfile是用来构建D ocker镜像的文件，是由一系列命令和参数构成的脚本
+
+Dockerfil e从FROM命令开始，紧接着各种命令、参数等，最终会生成一个新的镜像
+
+使用Dockerfile构建镜像的步骤：
+
+1. 编写D ockerfile文件
+
+2. 使用docker build构建镜像
+
+3. 使用docker run运行容器
+
+#### 2. **用法**
+
+##### **2.1**语法规则
+
+1. 指令必须要大写，且后面必须跟参数
+2. 第一条指令必须是FROM，指定Base Image基础镜像
+3. 指令按从上往下的顺序，依次执行
+4. 每条指定都会创建一个新的镜像层并提交
+5. -#表示注释
+
+| 指令       | 解释                                                         |
+| ---------- | ------------------------------------------------------------ |
+| FROM       | 指定基础镜像，即当前新镜像是基于哪个镜像的                   |
+| MAINTAINER | 指定作者                                                     |
+| RUN        | 指定构建过程中要运行的命令                                   |
+| ENV        | 设置环境变量	~1                                           |
+| WORKDIR    | 指定默认的工作目录，即进入容器后默认进入的目录	1          |
+| VOLUME     | 创建挂载点，也称容器数据卷，用于数据共享和持久化             |
+| CMD        | 指定容器启动时要运行的命令，与RUN不同的是，这些命令不是在镜像构建过程中 执行的 |
+| ENTRYPOINT | 指定容器启动时要运行的命令，与CMD有区别                      |
+| COPY       | 拷贝文件/目录到镜像中	\|                                  |
+| ADD        | 拷贝文件到镜像中，且会自动解压缩                             |
+| EXPOSE     | 指定对外暴露的端口                                           |
+
+##### 2.2**面试题：**
+
+CMD和ENTRYPOINT的区别（面试题）：
+
+- **CMD**
+
+在Dockerfile中可以有多个CMD指令，但只有最后一条指令生效，所以一般只有一条CMD 指令
+
+CMD指令在被docker run之后的参数覆盖
+
+```
+vi aaa
+
+FROM centos
+
+CMD [7bin/lsH]
+
+CMD [7bin/bashH]
+
+docker build -f aaa -t itany/aaa .
+
+docker run -it itany/aaa
+
+docker run -it itany/aaa /bin/pwd
+
+```
+
+- **ENTRYPOINT**
+
+docker run之后的参数会被作为ENTRYPOINT指令的参数，组合形成新的命令
+
+```
+vi bbb
+
+FROM centos
+
+ENTRYPOINT [,7bin/ls,,J,7usr/localH]
+
+docker build -f bbb -t itany/bbb .
+
+docker run -it itany/bbb
+
+docker run -it itany/bbb -I # Is/usr/local -I
+
+```
+
+#### 3.案例
+
+##### 3.1 自定义centos镜像
+
+```
+# 1.编写 Dockerfile 文件
+vi Dockerfile2
+FROM centos
+MAINTAINER tangxiaoyang@itany.com
+ENV MYPATH /usr/local/centos
+RUN mkdir -p $MYPATH WORKDIR $MYPATH
+RUN yum -y install vim
+RUN yum -y install wget
+#创建挂载点，无法指定宿主机上对应的目录，是自动生成的
+VOLUME ["/dataT',"/data2"]
+CMD [Vbin/bash"]
+# 2.使用docker build构建镜像
+docker build -f Dockerfile2 -t itany/centos:v1 .
+# 3.使用docker run运行容器
+docker run -it b25b1dad795c
+#查看镜像的变更历史
+docker history b25b1dad795c
+#验证挂载点：
+/var/lib/docker/volumes/0b001 b4cc8db1 ebbbb4c537c17a5c44adb700fb0e1 b941 bc82cc717c4ae1
+96f6/_data
+/Var/lib/docker/volumes/f020f5a5664bf68312be9f49a640f27ecfb49990b231aaf3d0eb7cb723fa0dd d/_data
+```
+
+##### 3.2自定义Tomcat镜像
+
+```
+#准备工作
+#1.编写 D ockerfile 文件
+vi Dockerfile
+FROM centos
+MAINTAINER tangxiaoyang@itany.com
+#拷贝文件，文件必须与Dockerfile在同一目录下
+COPY teacher.txt /usr/local
+ADD jdk-8u 171 -Iinux-x64.tar.gz /usr/local
+ADD apache-tomcat-8.5.30.tar.gz /usr/local
+#配置环境变量
+ENV JAVA_HOME /usr/local/jdk1.8.0_171
+ENV CLASSPATH .:$JAVA_HOME/lib
+ENV CATALINA_HOME /usr/local/apache-tomcat-8.5.30
+ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/bin
+WORKDIR $CATALINA_HOME
+RUN yum -y install vim
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+#2.使用docker build构建镜像
+docker build -t itany/tomcat:1.0 .
+#3.使用docker run运行容器
+docker run \
+—name mytomcat \
+-p 8080:8080 \
+-v /my/tomcat/webapps/spring-web.war:/usr/local/apache-tomcat-8.5.30/webapps/spring-
+web.war \
+-d itany/tomcat:1.0
+```
+
+### 六、使用docker环境搭建
+
+#### 1.安装Mysql
+
+#### 2.安装Redis
+
+#### 3.安装Nginx
