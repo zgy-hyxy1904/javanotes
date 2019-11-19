@@ -500,7 +500,7 @@ docker history b25b1dad795c
 /Var/lib/docker/volumes/f020f5a5664bf68312be9f49a640f27ecfb49990b231aaf3d0eb7cb723fa0dd d/_data
 ```
 
-##### 3.2自定义Tomcat镜像
+##### 3.2 自定义Tomcat镜像
 
 ```
 #准备工作
