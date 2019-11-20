@@ -102,8 +102,27 @@ kubernetes中基本的对象为Pod、Replication Controller和Service。
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl
 ```
 
-   
+### 
 
-————————————————
-版权声明：本文为CSDN博主「@路痴」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/zjm9109/article/details/53504677
+## 第二天 2019/11/20
+
+### 二、minikube的安装
+
+
+
+#### 1.安装过程及步骤
+
+https://blog.csdn.net/boling_cavalry/article/details/91304127
+
+
+
+#### 2.学习minikube的相关操作
+
+##### （1）minikube的操作命令
+
+![1574221889736](C:\Users\大仲马\AppData\Local\Temp\1574221889736.png)
+
+##### （2）kubectl的操作命令
+
+![1574232259947](C:\Users\大仲马\AppData\Local\Temp\1574232259947.png)![1574232284491](C:\Users\大仲马\AppData\Local\Temp\1574232284491.png)
+
