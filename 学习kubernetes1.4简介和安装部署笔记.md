@@ -21,7 +21,7 @@ Kubernetes（k8s）是Google开源的容器集群管理系统，是一个完备�
 
 假设图中是我们的三台“主机”，其中右侧两台是放我们应用的服务器，也就是k8s中的Node，在k8s中通过左侧的Master来管理我们的Node。 
 
-先说Master：kubectl是k8s中的命令行操作工具，类似docker命令；Authentication是k8s的认证，Authorization是k8s的授权；API Server提供了集群管理的API接口和负责集群内功能模块的数据交互和通信；Kubernetes以RESTFul形式开放接口；Scheduler是集群中的调度器，负责Pod在集群中节点的调度分配；controller manager是k8s的管理控制中心；etcd是一个高可用的键值存储系统，在k8s中用于存储集群中所有的资源对象的信息并被监控。 
+先说Master：kubectl是k8s中的命令行操作工具，类似docker命令；Authentication是k8s的认证，Authorization是k8s的授权；API Server提供了集群管理的API接口和负责**集群内功能模块的数据交互和通信；**Kubernetes以RESTFul形式开放接口；Scheduler是集群中的调度器，负责Pod在集群中节点的调度分配；controller manager是k8s的管理控制中心；etcd是一个高可用的键值存储系统，在k8s中用于存储集群中所有的资源对象的信息并被监控。 
 
 再说Node：Node是Kubernetes集群中相对Master而言的工作主机，可以是一台物理机、虚拟机或者云服务器；kubelet负责本Node上的Pod创建、修改、监控和删除等全生命周期管理，同时定时上报本Node的状态信息；Proxy实现Service的代理及软件模式的负载均衡；cAdvisor是一个用于监控容器运行状态的开源软件，k8s中默认被集成到kubelet组件中。
 
@@ -39,7 +39,7 @@ Kubernetes中Service、Pod、Master、Node、RC、label等概念都可以看作�
 
 ![img](https://img-blog.csdn.net/20161207114916863?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemptOTEwOQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast) 
 
-**Lable：** （标签）
+**Label：** （标签）
 是Kubernetes系统中的一个核心概念。Lable以key/value键值对的形式附加到各种资源对象上，如Pod、Service、RC、Node等，并且每个对象可以具有多个Lable，在为“对象”定义好Lable后，其他“对象”就可以使用Lable Selector来定义其作用的对象了。Lable Selector分为基于等式或者基于集合的形式，类似sql中的“=”、“！=”、“in”、“not in”语句，或者js中的name标签。
 
 **Replication Controller（RC）：** 
@@ -120,9 +120,153 @@ https://blog.csdn.net/boling_cavalry/article/details/91304127
 
 ##### （1）minikube的操作命令
 
-![1574221889736](C:\Users\大仲马\AppData\Local\Temp\1574221889736.png)
+![1574649245378](C:\Users\大仲马\AppData\Local\Temp\1574649245378.png)
 
 ##### （2）kubectl的操作命令
 
-![1574232259947](C:\Users\大仲马\AppData\Local\Temp\1574232259947.png)![1574232284491](C:\Users\大仲马\AppData\Local\Temp\1574232284491.png)
+![1574649760876](C:\Users\大仲马\AppData\Local\Temp\1574649760876.png)
 
+![1574649779036](C:\Users\大仲马\AppData\Local\Temp\1574649779036.png)
+
+
+
+![1574755640848](C:\Users\大仲马\AppData\Local\Temp\1574755640848.png)
+
+#### 3.boc项目常用命令
+
+- 镜像仓库获取总容量:
+
+df -h +path[runtime-countByClusterIds]
+
+- 从A copy 到B 服务器文件命令
+
+
+scp root-2019-6-6.zip root@10.1.87.128:test/
+
+- 获取所有命名空间内得容器
+
+
+kubectl get pod --all-namespaces
+
+- 查看某个命名空间下的所有容器
+
+
+kubectl get pod -n monitoring
+
+- 查看k8s所有节点
+
+
+kubectl get node
+
+- 查看容器deployment
+
+
+kubectl get deployment -n tomcat
+
+- k8s查看容器日志  -n 后面是namespaces -f后面是容器
+
+
+kubectl logs -n rsp-adaptermanager -f rsp-adaptermanager-1815-v1904192010-78856d6fd5-94jsv
+
+- 查看node节点信息
+
+
+kubectl describe node k8snode23
+
+- 重启node节点
+
+
+Reboot
+
+- 查看容器再哪个节点
+
+
+kubectl get pod --all-namespaces -o wide|grep rsp-gatway
+
+- 查看容器启动参数
+
+
+docker inspect devops-authnew 
+
+- 查看Prometheusde yaml
+
+
+kubectl get PrometheusRules -n monitoring -oyaml
+
+- 修改Prometheusde yaml
+
+
+kubectl edit PrometheusRules -n monitoring
+
+- 查看alertManager的日志信息，
+
+
+kubectl logs -f --tail=1000 alertmanager-main-0  -c alertmanager  -n monitoring
+
+- 进入查看yaml文件是否修改
+
+
+kubectl exec -it alertmanager-main-0 -n monitoring /bin/sh
+
+- Linux copy命令
+
+
+cp -r docker /mnt
+
+- 查询私有仓库的镜像：
+
+
+http请求： http://仓库ip:9000/abcsys/1.8/listImage   #1.8灵活
+curl -XGEThttp://仓库ip:5000/v2/_catalog
+
+- 删除私有仓库镜像   
+
+curl -I -H "Accept: application/vnd.docker.distribution.manifest.v2+json" abcsys.cn:5000/v2/imagename/manifests/tag
+curl -I -X DELETE http://registrytest.chinastock.com.cn:5000/v2/public/manifests/sha256:40175ddf01b08982ba112cf6a04c80d1bd6306ff7965c4d29569fc6bf4d88981
+
+- 升级安装
+
+
+rpm -Uvh <rpm包>
+
+- 查看镜像仓库挂载得共享目录
+
+
+mount | grep nfs
+
+- 定时清理本地镜像命令
+
+
+docker rmi $(docker images --format "{{.Repository }}:{{.Tag}}\t{{.CreatedAt}}\t{{.ID}}"|grep -vE $(date +'%Y-%m-%d')\|bf70c603d11f\|eb05a0f245ea\|5f98b5b883e7\|4df931c38363|awk '{print $1}')
+
+- 重启虚拟机
+
+
+reboot
+
+- 进入容器清理镜像
+
+
+[root@docker1 ~]# docker exec -it <容器ID|容器名称> /bin/sh
+/ # cd /var/lib/registry/
+/var/lib/registry # du -sch
+10.3M    .
+10.3M    total
+/var/lib/registry # registry garbage-collect /etc/docker/registry/config.yml
+/var/lib/registry # du -sch
+28.0K    .
+28.0K    total
+
+- 驱逐节点容器【参数：参数本地容器数据/忽略系统自带容器】
+
+
+kubectl drain k8snode39 --delete-local-data --ignore-daemonsets
+
+- 查看节点上得所有容器
+
+
+kubectl get pod --all-namespaces -o wide |grep k8snode39
+
+- 后台删除镜像
+
+curl -I -X DELET
