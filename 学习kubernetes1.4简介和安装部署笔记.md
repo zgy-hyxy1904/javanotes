@@ -270,3 +270,12 @@ kubectl get pod --all-namespaces -o wide |grep k8snode39
 - 后台删除镜像
 
 curl -I -X DELET
+
+#### 4.boc关键词理解
+
+**集群分区**：分区对应k8s得Namespaces
+**集群控制节点**：对应k8s得master节点
+**集群计算节点**：对应k8s得node节点（容器都是跑在节点上的）
+**容器列表**：对应得就是节点上所运行得容器
+**集群组件**：对应k8s集群所需要得组件，例如：监控租户见，日志组件，ingress，各种搭建集群时所有需要得组件（按CMP来说的话 就是指那些mq，redis等等这些）
+**实例列表**：对应pod
