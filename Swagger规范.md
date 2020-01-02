@@ -115,7 +115,14 @@ public Docket alarm_api_bm() {
             .build()
             .apiInfo(apiInfo())// 设置swagger-ui.html页面上的一些元素信息
             .enable(true);
-/*** ** api信息 * * @param name        标题 * @param** description 描述 * @param** version     版本 * @return* **/private ApiInfo apiInfo(String name, String description, String version) {
+/**
+ * api信息 * 
+@param name        标题 
+@param** description 描述 
+@param** version     版本 
+@return* 
+**/
+private ApiInfo apiInfo(String name, String description, String version) {
     return new ApiInfoBuilder().title(name).description(description).version(version).build();
 }
     //addResourceHandlers方法添加了两个资源处理程序，
